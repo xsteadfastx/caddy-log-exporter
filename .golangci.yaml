@@ -1,0 +1,10 @@
+linters:
+  enable-all: true
+  disable:
+    - depguard
+    - exhaustruct
+    - paralleltest
+    - varnamelen
+    - tagliatelle
+output:
+  sort-results: true

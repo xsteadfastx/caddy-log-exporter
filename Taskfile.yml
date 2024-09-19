@@ -1,0 +1,16 @@
+version: "3"
+vars:
+  NIX_CMD_BASE: nix develop . -c
+tasks:
+  ci:
+    cmds:
+      - task: lint
+      - task: test
+
+  lint:
+    cmds:
+      - "{{.NIX_CMD_BASE}} golangci-lint run --enable-all"
+
+  test:
+    cmds:
+      - "{{.NIX_CMD_BASE}} go test -v -race ./..."
