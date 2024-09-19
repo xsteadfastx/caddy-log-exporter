@@ -2,8 +2,8 @@ name: "test"
 on:
   pull_request:
   push:
-    tags-ignore:
-      - '**'
+  # tags-ignore:
+  #   - '**'
 jobs:
   ci:
     runs-on: ubuntu-latest
