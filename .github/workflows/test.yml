@@ -1,7 +1,9 @@
-name: "ci"
+name: "test"
 on:
   pull_request:
   push:
+    tags-ignore:
+      - '**'
 jobs:
   ci:
     runs-on: ubuntu-latest
