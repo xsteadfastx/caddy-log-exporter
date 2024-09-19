@@ -6,6 +6,7 @@ tasks:
     cmds:
       - task: lint
       - task: test
+      - task: release-snapshot
 
   lint:
     cmds:
@@ -14,3 +15,16 @@ tasks:
   test:
     cmds:
       - "{{.NIX_CMD_BASE}} go test -v -race ./..."
+
+  tidy:
+    cmds:
+      - go mod tidy
+      - go mod vendor
+
+  release:
+    cmds:
+      - "{{.NIX_CMD_BASE}} goreleaser release --clean"
+
+  release-snapshot:
+    cmds:
+      - "{{.NIX_CMD_BASE}} goreleaser release --clean --snapshot"

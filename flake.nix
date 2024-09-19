@@ -22,6 +22,7 @@
             golines
             gopls
             goreleaser
+            ko
           ];
         in
         with pkgs; {
