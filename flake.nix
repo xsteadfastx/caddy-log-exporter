@@ -32,13 +32,13 @@
           env-pkgs = with pkgs; [
             go_1_23
 
+            gh # github commandline tool
             go-task
             gofumpt
             golangci-lint
             golines
             gopls
-
-            skopeo
+            skopeo # handling docker images without docker
           ];
         in
         with pkgs; {
