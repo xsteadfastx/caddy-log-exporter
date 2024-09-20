@@ -6,14 +6,15 @@ tasks:
     cmds:
       - task: lint
       - task: test
+      - task: docker-inspect
 
   ci-publish:
     cmds:
       - task: lint
       - task: test
-      - task: docker
+      - task: docker-publish
 
-  docker:
+  docker-publish:
     requires:
       vars:
         - GITHUB_USERNAME
@@ -28,6 +29,14 @@ tasks:
         --dest-username {{.GITHUB_USERNAME}} --dest-password {{.GITHUB_PASSWORD}} \
         docker-archive://$(nix build .#docker --print-out-paths) \
         docker://ghcr.io/xsteadfastx/caddy-log-exporter:{{.GIT_TAG}}
+
+  docker-inspect:
+    cmds:
+      - |
+        {{.NIX_CMD_BASE}} \
+        skopeo \
+        inspect \
+        docker-archive://$(nix build .#docker --print-out-paths)
 
   lint:
     cmds:
