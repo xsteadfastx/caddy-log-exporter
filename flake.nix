@@ -10,10 +10,16 @@
         let
           pkgs = import inputs.nixpkgs {
             inherit system;
-            overlays = [ ];
+            overlays = [
+              (final: prev: {
+                golangci-lint = prev.golangci-lint.override { buildGo123Module = goBuild; };
+              })
+            ];
           };
 
-          caddy-log-exporter = pkgs.buildGo123Module {
+          goBuild = pkgs.buildGo123Module;
+
+          caddy-log-exporter = goBuild {
             name = "caddy-log-exporter";
             src = ./.;
             vendorHash = null;
@@ -34,10 +40,7 @@
 
             gh # github commandline tool
             go-task
-            gofumpt
             golangci-lint
-            golines
-            gopls
             skopeo # handling docker images without docker
           ];
         in
