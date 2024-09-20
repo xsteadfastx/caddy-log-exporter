@@ -6,25 +6,42 @@ tasks:
     cmds:
       - task: lint
       - task: test
-      - task: release-snapshot
+
+  ci-publish:
+    cmds:
+      - task: lint
+      - task: test
+      - task: docker
+
+  docker:
+    requires:
+      vars:
+        - GITHUB_USERNAME
+        - GITHUB_PASSWORD
+        - GIT_TAG
+    cmds:
+      - |
+        {{.NIX_CMD_BASE}} \
+        skopeo \
+        --insecure-policy \
+        copy \
+        --dest-username {{.GITHUB_USERNAME}} --dest-password {{.GITHUB_PASSWORD}} \
+        docker-archive://$(nix build .#docker --print-out-paths) \
+        docker://ghcr.io/xsteadfastx/caddy-log-exporter:{{.GIT_TAG}}
 
   lint:
     cmds:
-      - "{{.NIX_CMD_BASE}} golangci-lint run --enable-all"
+      - |
+        {{.NIX_CMD_BASE}} \
+        golangci-lint run --enable-all
 
   test:
     cmds:
-      - "{{.NIX_CMD_BASE}} go test -v -race ./..."
+      - |
+        {{.NIX_CMD_BASE}} \
+        go test -v -race ./...
 
   tidy:
     cmds:
       - go mod tidy
       - go mod vendor
-
-  release:
-    cmds:
-      - "{{.NIX_CMD_BASE}} goreleaser release --clean"
-
-  release-snapshot:
-    cmds:
-      - "{{.NIX_CMD_BASE}} goreleaser release --clean --snapshot"

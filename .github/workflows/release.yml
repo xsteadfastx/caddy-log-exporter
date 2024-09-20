@@ -10,6 +10,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v27
-      - run: nix develop . -c golangci-lint run --enable-all
-      - run: nix develop . -c go test -v -race ./...
-      - run: nix develop . -c skopeo --insecure-policy copy --dest-username ${{ github.actor }} --dest-password ${{ secrets.GITHUB_TOKEN }} docker-archive://$(nix build .#docker --print-out-paths) docker://ghcr.io/xsteadfastx/caddy-log-exporter:${{ github.ref_name }}
+      - run: nix develop . -c task ci-publish --GITHUB_USERNAME ${{ github.actor }} --GITHUB_PASSWORD ${{ secrets.GITHUB_TOKEN }} --GIT_TAG ${{ github.ref_name }}
