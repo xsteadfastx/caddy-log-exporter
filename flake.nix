@@ -22,6 +22,7 @@
           caddy-log-exporter = goBuild {
             name = "caddy-log-exporter";
             src = ./.;
+            doCheck = false;
             vendorHash = null;
             ldflags = [ "-s" "-w" "-extldflags '-static'" ];
             CGO_ENABLED = 0;
