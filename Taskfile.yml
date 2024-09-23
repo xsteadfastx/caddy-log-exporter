@@ -1,22 +1,29 @@
 version: "3"
+
 vars:
   NIX_CMD_BASE: nix develop . -c
+
 tasks:
   ci:
     cmds:
+      - task: clean
       - task: lint
-      - task: test
-      - task: docker-local-import
-      - task: test-integration
+      - task: test-all
 
   ci-publish:
     cmds:
+      - task: clean
       - task: lint
-      - task: test
-      - task: test-integration
+      - task: test-all
       - task: docker-publish
 
+  clean:
+    cmds:
+      - rm -rf result
+
   docker-build:
+    status:
+      - test -f result
     cmds:
       - nix build .#docker
 
@@ -29,12 +36,12 @@ tasks:
         --insecure-policy \
         copy \
         docker-archive:$(readlink -f result) \
-        docker-daemon:caddy-log-exporter:latest
+        docker-daemon:caddy-log-exporter:NOTUSE
       - |
         {{.NIX_CMD_BASE}} \
         skopeo \
         inspect \
-        docker-daemon:caddy-log-exporter:latest
+        docker-daemon:caddy-log-exporter:NOTUSE
 
   docker-publish:
     requires:
@@ -75,9 +82,15 @@ tasks:
 
   test-integration:
     cmds:
+      - task: docker-local-import
       - |
         {{.NIX_CMD_BASE}} \
         go test -v -race ./test/integration/...
+
+  test-all:
+    cmds:
+      - task: test
+      - task: test-integration
 
   tidy:
     cmds:

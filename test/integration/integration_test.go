@@ -99,7 +99,7 @@ func TestIntegration(t *testing.T) {
 					"CADDY_LOG_EXPORTER_LOG_FILES": "/var/log/caddy/caddy.log",
 				},
 				Mounts:       vol,
-				Image:        "caddy-log-exporter:latest",
+				Image:        "caddy-log-exporter:NOTUSE",
 				ExposedPorts: []string{"2112:2112"},
 				WaitingFor: wait.ForHTTP("http://127.0.0.1:2112/healthz").
 					WithStartupTimeout(5 * time.Minute),
