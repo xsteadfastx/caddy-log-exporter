@@ -78,14 +78,14 @@ tasks:
     cmds:
       - |
         {{.NIX_CMD_BASE}} \
-        go test -v -race ./internal/...
+        go test -v -race -count=1 ./internal/...
 
   test-integration:
     cmds:
       - task: docker-local-import
       - |
         {{.NIX_CMD_BASE}} \
-        go test -v -race ./test/integration/...
+        go test -v -race -count=1 ./test/integration/...
 
   test-all:
     cmds:
