@@ -87,6 +87,9 @@ func TestIntegration(t *testing.T) {
 	)
 	require.NoError(err)
 
+	reqRoot()
+	<-time.After(time.Minute)
+
 	_, err = testcontainers.GenericContainer(
 		context.Background(),
 		testcontainers.GenericContainerRequest{
