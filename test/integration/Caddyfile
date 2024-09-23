@@ -1,0 +1,8 @@
+http://127.0.0.1:2113
+
+log {
+	format json
+	output file /var/log/caddy/caddy.log
+}
+
+respond "hello world"

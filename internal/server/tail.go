@@ -53,13 +53,12 @@ func parseFunc(t *tail.Tail) {
 
 		metrics.GetOrCreateHistogram(
 			fmt.Sprintf(
-				`%s_http_request_duration_seconds{host="%s", proto="%s", method="%s", status="%d", user_agent="%s"}`,
+				`%s_http_request_duration_seconds{host="%s", proto="%s", method="%s", status="%d"}`,
 				metricBaseName,
 				l.Request.Host,
 				l.Request.Proto,
 				l.Request.Method,
 				l.Status,
-				l.Request.Headers.UserAgent[0],
 			),
 		).Update(l.Duration)
 	}

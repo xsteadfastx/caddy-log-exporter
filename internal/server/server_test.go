@@ -100,9 +100,9 @@ func TestServe(t *testing.T) {
 	require.NoError(err)
 
 	require.Equal(
-		`caddy_log_exporter_http_request_duration_seconds_bucket{host="foo.tld", proto="HTTP/2.0", method="GET", status="200", user_agent="facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)",vmrange="3.162e-03...3.594e-03"} 10
-caddy_log_exporter_http_request_duration_seconds_sum{host="foo.tld", proto="HTTP/2.0", method="GET", status="200", user_agent="facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"} 0.03550188
-caddy_log_exporter_http_request_duration_seconds_count{host="foo.tld", proto="HTTP/2.0", method="GET", status="200", user_agent="facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"} 10
+		`caddy_log_exporter_http_request_duration_seconds_bucket{host="foo.tld", proto="HTTP/2.0", method="GET", status="200",vmrange="3.162e-03...3.594e-03"} 10
+caddy_log_exporter_http_request_duration_seconds_sum{host="foo.tld", proto="HTTP/2.0", method="GET", status="200"} 0.03550188
+caddy_log_exporter_http_request_duration_seconds_count{host="foo.tld", proto="HTTP/2.0", method="GET", status="200"} 10
 caddy_log_exporter_http_request_total{host="foo.tld", proto="HTTP/2.0", method="GET", status="200", user_agent="facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"} 10
 `,
 		string(b),

@@ -6,13 +6,36 @@ tasks:
     cmds:
       - task: lint
       - task: test
-      - task: docker-inspect
+      - task: docker-build
+      - task: docker-local-import
+      - task: test-integration
 
   ci-publish:
     cmds:
       - task: lint
       - task: test
+      - task: test-integration
+      - task: docker-build
       - task: docker-publish
+
+  docker-build:
+    cmds:
+      - nix build .#docker
+
+  docker-local-import:
+    cmds:
+      - |
+        {{.NIX_CMD_BASE}} \
+        skopeo \
+        --insecure-policy \
+        copy \
+        docker-archive:$(readlink -f result) \
+        docker-daemon:caddy-log-exporter:latest
+      - |
+        {{.NIX_CMD_BASE}} \
+        skopeo \
+        inspect \
+        docker-daemon:caddy-log-exporter:latest
 
   docker-publish:
     requires:
@@ -27,7 +50,7 @@ tasks:
         --insecure-policy \
         copy \
         --dest-username {{.GITHUB_USERNAME}} --dest-password {{.GITHUB_PASSWORD}} \
-        docker-archive://$(nix build .#docker --print-out-paths) \
+        docker-archive:$(readlink -f result) \
         docker://ghcr.io/xsteadfastx/caddy-log-exporter:{{.GIT_TAG}}
 
   docker-inspect:
@@ -36,7 +59,7 @@ tasks:
         {{.NIX_CMD_BASE}} \
         skopeo \
         inspect \
-        docker-archive://$(nix build .#docker --print-out-paths)
+        docker-archive:$(readlink -f result)
 
   lint:
     cmds:
@@ -48,7 +71,13 @@ tasks:
     cmds:
       - |
         {{.NIX_CMD_BASE}} \
-        go test -v -race ./...
+        go test -v -race ./internal/...
+
+  test-integration:
+    cmds:
+      - |
+        {{.NIX_CMD_BASE}} \
+        go test -v -race ./test/integration/...
 
   tidy:
     cmds:
