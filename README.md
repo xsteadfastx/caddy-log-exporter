@@ -8,6 +8,10 @@ I use the wonderful caddy server just everywhere. There are two things that i di
 
 The other point is: i run a little [gitea](https://about.gitea.com/) instance for some little projects on a small vserver from hetzner. some weeks ago i got prometheus alerts for cpu and memory exhaustion. i checked logs and everything and found out that i got a victim of this stupid fucked up ai craweler shit. so i start to check my caddy logs if i discover high load on my server and add the user agents to my `Caddyfile`. i thought it would be nice to find a top list of scraper bots that gets by my caddy server. so this exporter also adds the user agents as prometheus labels.
 
+Here metrics after running the exporter for a few minutes:
+
+![README](./README.png)
+
 Happily, all the stuff we need is available through the standard json logs 🥳🎉, we tail them and create metrics out of them.
 
 ## Installation
