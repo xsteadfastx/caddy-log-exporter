@@ -10,7 +10,11 @@ The other point is: i run a little [gitea](https://about.gitea.com/) instance fo
 
 Here metrics after running the exporter for a few minutes:
 
-![README](./README.png)
+![vm](./vm.png)
+
+Here in grafana:
+
+![grafana](./grafana.png)
 
 Happily, all the stuff we need is available through the standard json logs 🥳🎉, we tail them and create metrics out of them.
 
