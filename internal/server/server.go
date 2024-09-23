@@ -28,6 +28,11 @@ func New(c config.Config) *Server {
 	s.logFiles = c.LogFiles
 
 	mux := http.NewServeMux()
+
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
+		w.Write([]byte("ok")) //nolint:errcheck
+	})
+
 	mux.HandleFunc("/metrics", s.metrics)
 
 	s.httpServer = &http.Server{

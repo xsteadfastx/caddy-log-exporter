@@ -6,7 +6,6 @@ tasks:
     cmds:
       - task: lint
       - task: test
-      - task: docker-build
       - task: docker-local-import
       - task: test-integration
 
@@ -15,7 +14,6 @@ tasks:
       - task: lint
       - task: test
       - task: test-integration
-      - task: docker-build
       - task: docker-publish
 
   docker-build:
@@ -24,6 +22,7 @@ tasks:
 
   docker-local-import:
     cmds:
+      - task: docker-build
       - |
         {{.NIX_CMD_BASE}} \
         skopeo \
@@ -44,6 +43,7 @@ tasks:
         - GITHUB_PASSWORD
         - GIT_TAG
     cmds:
+      - task: docker-build
       - |
         {{.NIX_CMD_BASE}} \
         skopeo \
