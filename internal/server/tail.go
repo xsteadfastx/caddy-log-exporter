@@ -39,27 +39,31 @@ func parseFunc(t *tail.Tail) {
 			continue
 		}
 
-		metrics.GetOrCreateCounter(
-			fmt.Sprintf(
-				`%s_http_request_total{host="%s", proto="%s", method="%s", status="%d", user_agent="%s"}`,
-				metricBaseName,
-				l.Request.Host,
-				l.Request.Proto,
-				l.Request.Method,
-				l.Status,
-				l.Request.Headers.UserAgent[0],
-			),
-		).Inc()
+		if len(l.Request.Headers.UserAgent) != 0 {
+			metrics.GetOrCreateCounter(
+				fmt.Sprintf(
+					`%s_http_request_total{host="%s", proto="%s", method="%s", status="%d", user_agent="%s"}`,
+					metricBaseName,
+					l.Request.Host,
+					l.Request.Proto,
+					l.Request.Method,
+					l.Status,
+					l.Request.Headers.UserAgent[0],
+				),
+			).Inc()
 
-		metrics.GetOrCreateHistogram(
-			fmt.Sprintf(
-				`%s_http_request_duration_seconds{host="%s", proto="%s", method="%s", status="%d"}`,
-				metricBaseName,
-				l.Request.Host,
-				l.Request.Proto,
-				l.Request.Method,
-				l.Status,
-			),
-		).Update(l.Duration)
+			metrics.GetOrCreateHistogram(
+				fmt.Sprintf(
+					`%s_http_request_duration_seconds{host="%s", proto="%s", method="%s", status="%d"}`,
+					metricBaseName,
+					l.Request.Host,
+					l.Request.Proto,
+					l.Request.Method,
+					l.Status,
+				),
+			).Update(l.Duration)
+		} else {
+			slog.Warn("got empty user agent", "headers", l.Request.Headers)
+		}
 	}
 }
