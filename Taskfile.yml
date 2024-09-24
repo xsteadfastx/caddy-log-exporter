@@ -8,6 +8,7 @@ tasks:
     cmds:
       - task: clean
       - task: lint
+      - task: docker-build-all
       - task: test-all
 
   ci-publish:
@@ -15,27 +16,53 @@ tasks:
       - task: clean
       - task: lint
       - task: test-all
-      - task: docker-publish
+      - task: docker-publish-all
 
   clean:
     cmds:
-      - rm -rf result
+      - rm -rf result-*
 
   docker-build:
+    requires:
+      vars:
+        - ARCH
     status:
-      - test -f result
+      - test -f result-{{.ARCH}}
     cmds:
-      - nix build .#docker
+      - nix build .#docker --option system {{.ARCH}}
+      - mv result result-{{.ARCH}}
+
+  docker-build-all:
+    cmds:
+      - for:
+          - x86_64-linux
+          - aarch64-linux
+        task: docker-build
+        vars:
+          ARCH: "{{.ITEM}}"
+
+  docker-publish-all:
+    cmds:
+      - for:
+          - x86_64-linux
+          - aarch64-linux
+        task: docker-publish
+        vars:
+          ARCH: "{{.ITEM}}"
 
   docker-local-import:
+    vars:
+      ARCH: '{{default "x86_64-linux" .ARCH}}'
     cmds:
       - task: docker-build
+        vars:
+          ARCH: "{{.ARCH}}"
       - |
         {{.NIX_CMD_BASE}} \
         skopeo \
         --insecure-policy \
         copy \
-        docker-archive:$(readlink -f result) \
+        docker-archive:$(readlink -f result-{{.ARCH}}) \
         docker-daemon:caddy-log-exporter:NOTUSE
       - |
         {{.NIX_CMD_BASE}} \
@@ -46,19 +73,22 @@ tasks:
   docker-publish:
     requires:
       vars:
+        - ARCH
         - GITHUB_USERNAME
         - GITHUB_PASSWORD
         - GIT_TAG
     cmds:
       - task: docker-build
+        vars:
+          ARCH: "{{.ARCH}}"
       - |
         {{.NIX_CMD_BASE}} \
         skopeo \
         --insecure-policy \
         copy \
         --dest-username {{.GITHUB_USERNAME}} --dest-password {{.GITHUB_PASSWORD}} \
-        docker-archive:$(readlink -f result) \
-        docker://ghcr.io/xsteadfastx/caddy-log-exporter:{{.GIT_TAG}}
+        docker-archive:$(readlink -f result-{{.ARCH}}) \
+        docker://ghcr.io/xsteadfastx/caddy-log-exporter-{{.ARCH}}:{{.GIT_TAG}}
 
   docker-inspect:
     cmds:
