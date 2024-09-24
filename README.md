@@ -20,7 +20,9 @@ Happily, all the stuff we need is available through the standard json logs ðŸ¥³ð
 
 ## Installation
 
-Grab the latest docker image from [here](https://github.com/xsteadfastx/caddy-log-exporter/pkgs/container/caddy-log-exporter).
+Grab the latest docker image from [here](https://github.com/xsteadfastx?tab=packages&repo_name=caddy-log-exporter).
+
+Images are available for `x86_64-linux` and `aarch64-linux`.
 
 ## Usage
 
