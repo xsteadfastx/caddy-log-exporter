@@ -2,6 +2,7 @@ version: "3"
 
 vars:
   NIX_CMD_BASE: nix develop . -c
+  ARCH_LIST: x86_64-linux
 
 tasks:
   ci:
@@ -35,8 +36,8 @@ tasks:
   docker-build-all:
     cmds:
       - for:
-          - x86_64-linux
-          - aarch64-linux
+          var: ARCH_LIST
+          split: ","
         task: docker-build
         vars:
           ARCH: "{{.ITEM}}"
@@ -44,15 +45,16 @@ tasks:
   docker-publish-all:
     cmds:
       - for:
-          - x86_64-linux
-          - aarch64-linux
+          var: ARCH_LIST
+          split: ","
         task: docker-publish
         vars:
           ARCH: "{{.ITEM}}"
 
   docker-local-import:
-    vars:
-      ARCH: '{{default "x86_64-linux" .ARCH}}'
+    requires:
+      vars:
+        - ARCH
     cmds:
       - task: docker-build
         vars:
@@ -113,6 +115,8 @@ tasks:
   test-integration:
     cmds:
       - task: docker-local-import
+        vars:
+          ARCH: x86_64-linux
       - |
         {{.NIX_CMD_BASE}} \
         go test -v -race -count=1 ./test/integration/...
